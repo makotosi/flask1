@@ -27,12 +27,14 @@
         this.bricks;
         this.paddle;
         this.ball;
+        this.ball2;
+      }
     },
 
     preload: function ()
     {
 
-      this.load.image('bricks', '{{ url_for("static", filename="img/star.png") }}');
+      this.load.image('bricks', '{{ url_for("static", filename="img/block.png") }}');
       this.load.image('ball1', '{{ url_for("static", filename="img/bomb.png") }}');
       this.load.image('paddle1', '{{ url_for("static", filename="img/platform1.png") }}');
       this.load.image('sky', '{{ url_for("static", filename="img/sky.png") }}');
@@ -44,20 +46,38 @@
         this.physics.world.setBoundsCollision(true, true, true, false);
 
         this.bricks = this.physics.add.staticGroup();
-        bricks = this.bricks.create(100, 100, 'bricks');
-        bricks = this.bricks.create(100, 200, 'bricks');
-        bricks = this.bricks.create(100, 300, 'bricks');
-        bricks = this.bricks.create(200, 100, 'bricks');
-        bricks = this.bricks.create(200, 200, 'bricks');
-        bricks = this.bricks.create(200, 300, 'bricks');
+        var br300;
+      for(br300=25;br300<726;br300+=50){
+        bricks = this.bricks.create(br300, 300, 'bricks').setScale(0.5).refreshBody();;
+       }
+        var br200;
+      for(br200=75;br200<776;br200+=50){
+        bricks = this.bricks.create(br200, 200, 'bricks').setScale(0.5).refreshBody();;
+       }
+        var br100;
+      for(br100=25;br100<726;br100+=50){
+        bricks = this.bricks.create(br100, 100, 'bricks').setScale(0.5).refreshBody();;
+       }
+        var br0;
+      for(br0=75;br0<776;br0+=50){
+        bricks = this.bricks.create(br0, 0, 'bricks').setScale(0.5).refreshBody();;
+       }
 
         this.ball = this.physics.add.image(400, 500, 'ball1').setCollideWorldBounds(true).setBounce(1);
+        this.ball2 = this.physics.add.image(400, 500, 'ball1').setCollideWorldBounds(true).setBounce(1);
         this.ball.setData('onPaddle', true);
+        this.ball2.setData('onPaddle', true);
+        for(var i=3;i<100;i++){
+        this.ball+i = this.physics.add.image(400, 500, 'ball1').setCollideWorldBounds(true).setBounce(1);
+        this.ball+i.setData('onPaddle', true);
+        }
 
         this.paddle = this.physics.add.image(400, 550, 'paddle1').setImmovable();
 
         this.physics.add.collider(this.ball, this.bricks, this.hitBrick, null, this);
         this.physics.add.collider(this.ball, this.paddle, this.hitPaddle, null, this);
+        this.physics.add.collider(this.ball2, this.bricks, this.hitBrick, null, this);
+        this.physics.add.collider(this.ball2, this.paddle, this.hitPaddle, null, this);
 
         this.input.on('pointermove', function (pointer) {
 
@@ -67,23 +87,29 @@
             {
                 this.ball.x = this.paddle.x;
             }
-
+            if (this.ball2.getData('onPaddle'))
+            {
+                this.ball2.x = this.paddle.x;
+            }
         }, this);
 
         this.input.on('pointerup', function (pointer) {
 
             if (this.ball.getData('onPaddle'))
             {
-                this.ball.setVelocity(-75, -300);
+                this.ball.setVelocity(1200, -2300);
                 this.ball.setData('onPaddle', false);
             }
-
+            if (this.ball2.getData('onPaddle'))
+            {
+                this.ball2.setVelocity(1200, -2000);
+                this.ball2.setData('onPaddle', false);
         }, this);
     },
 
     hitBrick: function (ball, brick)
     {
-        brick.disableBody(true, true);
+        //brick.disableBody(true, true);
 
         if (this.bricks.countActive() === 0)
         {
@@ -93,9 +119,11 @@
 
     resetBall: function ()
     {
+      /*
         this.ball.setVelocity(0);
         this.ball.setPosition(this.paddle.x, 500);
         this.ball.setData('onPaddle', true);
+      */
     },
 
     resetLevel: function ()

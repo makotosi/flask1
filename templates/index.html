@@ -47,7 +47,7 @@
     {
       this.load.image('sky', '{{ url_for("static", filename="img/sky.png") }}');
       this.load.image('ground', '{{ url_for("static", filename="img/platform.png") }}');
-      this.load.image('star', '{{ url_for("static", filename="img/star.png") }}');
+      this.load.image('block', '{{ url_for("static", filename="img/block.png") }}');
       this.load.image('bomb', '{{ url_for("static", filename="img/bomb.png") }}');
       this.load.spritesheet('dude', 
         '{{ url_for("static", filename="img/dude.png") }}',
@@ -101,7 +101,7 @@
       cursors = this.input.keyboard.createCursorKeys();
 
       stars = this.physics.add.group({
-            key: 'star',
+            key: 'block',
             repeat: 11,
             setXY: { x: 12, y: 0, stepX: 70 }
         });
