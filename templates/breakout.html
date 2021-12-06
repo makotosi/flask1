@@ -14,6 +14,8 @@
 
 <script type="text/javascript">
 
+  var loopCheck = false;
+  var l = 0;
   var Breakout = new Phaser.Class({
 
     Extends: Phaser.Scene,
@@ -23,12 +25,13 @@
     function Breakout ()
     {
         Phaser.Scene.call(this, { key: 'breakout' });
-
         this.bricks;
         this.paddle;
         this.ball;
         this.ball2;
-      }
+        this.ball3;
+        this.ball4;
+        this.arrow;
     },
 
     preload: function ()
@@ -38,6 +41,7 @@
       this.load.image('ball1', '{{ url_for("static", filename="img/bomb.png") }}');
       this.load.image('paddle1', '{{ url_for("static", filename="img/platform1.png") }}');
       this.load.image('sky', '{{ url_for("static", filename="img/sky.png") }}');
+      this.load.image('arrow', '{{ url_for("static", filename="img/arrow.png") }}');
     },
 
     create: function ()
@@ -65,45 +69,55 @@
 
         this.ball = this.physics.add.image(400, 500, 'ball1').setCollideWorldBounds(true).setBounce(1);
         this.ball2 = this.physics.add.image(400, 500, 'ball1').setCollideWorldBounds(true).setBounce(1);
+        this.ball3 = this.physics.add.image(400, 500, 'ball1').setCollideWorldBounds(true).setBounce(1);
+        this.ball4 = this.physics.add.image(400, 500, 'ball1').setCollideWorldBounds(true).setBounce(1);
+
         this.ball.setData('onPaddle', true);
         this.ball2.setData('onPaddle', true);
-        for(var i=3;i<100;i++){
-        this.ball+i = this.physics.add.image(400, 500, 'ball1').setCollideWorldBounds(true).setBounce(1);
-        this.ball+i.setData('onPaddle', true);
-        }
+        this.ball3.setData('onPaddle', true);
+        this.ball4.setData('onPaddle', true);
 
         this.paddle = this.physics.add.image(400, 550, 'paddle1').setImmovable();
+        this.arrow = this.physics.add.image(400, 460, 'arrow').setImmovable();
 
         this.physics.add.collider(this.ball, this.bricks, this.hitBrick, null, this);
         this.physics.add.collider(this.ball, this.paddle, this.hitPaddle, null, this);
         this.physics.add.collider(this.ball2, this.bricks, this.hitBrick, null, this);
         this.physics.add.collider(this.ball2, this.paddle, this.hitPaddle, null, this);
+        this.physics.add.collider(this.ball3, this.bricks, this.hitBrick, null, this);
+        this.physics.add.collider(this.ball3, this.paddle, this.hitPaddle, null, this);
+        this.physics.add.collider(this.ball4, this.bricks, this.hitBrick, null, this);
+        this.physics.add.collider(this.ball4, this.paddle, this.hitPaddle, null, this);
+
 
         this.input.on('pointermove', function (pointer) {
 
             this.paddle.x = Phaser.Math.Clamp(pointer.x, 52, 748);
+            this.arrow.x = this.paddle.x + 20;
 
             if (this.ball.getData('onPaddle'))
             {
                 this.ball.x = this.paddle.x;
-            }
-            if (this.ball2.getData('onPaddle'))
-            {
                 this.ball2.x = this.paddle.x;
+                this.ball3.x = this.paddle.x;
+                this.ball4.x = this.paddle.x;
             }
         }, this);
 
         this.input.on('pointerup', function (pointer) {
+            this.arrow.disableBody(true, true);
 
             if (this.ball.getData('onPaddle'))
             {
-                this.ball.setVelocity(1200, -2300);
+                this.ball.setVelocity(1400, -1400);
                 this.ball.setData('onPaddle', false);
-            }
-            if (this.ball2.getData('onPaddle'))
-            {
-                this.ball2.setVelocity(1200, -2000);
+                this.ball2.setVelocity(1200, -1200);
                 this.ball2.setData('onPaddle', false);
+                this.ball3.setVelocity(1000, -1000);
+                this.ball3.setData('onPaddle', false);
+                this.ball4.setVelocity(800, -800);
+                this.ball4.setData('onPaddle', false);
+                                                   }
         }, this);
     },
 
@@ -119,11 +133,34 @@
 
     resetBall: function ()
     {
-      /*
+        if(l<100){
         this.ball.setVelocity(0);
         this.ball.setPosition(this.paddle.x, 500);
         this.ball.setData('onPaddle', true);
-      */
+        this.ball2.setVelocity(0);
+        this.ball3.setVelocity(0);
+        this.ball4.setVelocity(0);
+        this.ball2.setPosition(this.paddle.x, 500);
+        this.ball3.setPosition(this.paddle.x, 500);
+        this.ball4.setPosition(this.paddle.x, 500);
+        this.ball2.setData('onPaddle', true);
+        this.ball3.setData('onPaddle', true);
+        this.ball4.setData('onPaddle', true);
+        if (this.ball.getData('onPaddle'))
+            {
+                this.ball.setVelocity(1400, -1400);
+                this.ball.setData('onPaddle', false);
+                this.ball2.setVelocity(1200, -1200);
+                this.ball2.setData('onPaddle', false);
+                this.ball3.setVelocity(1000, -1000);
+                this.ball3.setData('onPaddle', false);
+                this.ball4.setVelocity(800, -800);
+                this.ball4.setData('onPaddle', false);
+            }
+        }
+        l++;
+
+
     },
 
     resetLevel: function ()
@@ -159,7 +196,7 @@
 
     update: function ()
     {
-        if (this.ball.y > 600)
+        if (this.ball2.y > 600)
         {
             this.resetBall();
         }
